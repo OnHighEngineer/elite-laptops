@@ -4,12 +4,12 @@ const ITEMS = [
   {
     icon: ShieldCheck,
     title: "1-Year Service Warranty",
-    desc: "Every laptop is covered for a full year.",
+    desc: "Comprehensive service coverage for a full year.",
   },
   {
     icon: Wrench,
-    title: "1-Year Service Warranty",
-    desc: "Free service support for a full year.",
+    title: "Expert Technical Support",
+    desc: "Free diagnostic and service support for a full year.",
   },
   {
     icon: BadgeCheck,
