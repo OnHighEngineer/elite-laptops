@@ -34,9 +34,6 @@ export function ProductCard({ product }: { product: Product }) {
       <div className="p-3 sm:p-4 flex flex-col flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-2">
           <ConditionBadge condition={product.condition} />
-          {savings !== null && (
-            <span className="text-xs font-semibold text-[#111111]">{savings}% off</span>
-          )}
           {!product.inStock && (
             <span className="text-xs text-[#999999] ml-auto">{product.stockStatus === "coming_soon" ? "Coming soon" : "Out of stock"}</span>
           )}
@@ -60,27 +57,15 @@ export function ProductCard({ product }: { product: Product }) {
           <ShieldCheck className="w-3.5 h-3.5 shrink-0 mt-px" aria-hidden />
           {warrantyLabel({ warrantyMonths: product.warrantyMonths ?? STORE_TERMS.warrantyMonths, serviceMonths: product.serviceMonths ?? STORE_TERMS.serviceMonths })}
         </p>
-        {product.condition !== "new" && (
-          <p className="text-[11px] sm:text-xs text-[#666666] mb-2 sm:mb-3 flex items-center gap-1 -mt-1 sm:-mt-2">
-            <BadgeCheck className="w-3.5 h-3.5 shrink-0" aria-hidden />
-            Quality Checked
-          </p>
-        )}
+        <p className="text-[11px] sm:text-xs text-[#666666] mb-2 sm:mb-3 flex items-center gap-1 -mt-1 sm:-mt-2">
+          <BadgeCheck className="w-3.5 h-3.5 shrink-0" aria-hidden />
+          Quality Checked
+        </p>
 
         {/* Price + CTA */}
         <div className="mt-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-[#E5E5E5]">
           <div>
             <p className="font-semibold text-[#111111] text-sm sm:text-base">{formatPrice(product.price)}</p>
-            {savings !== null && product.originalPrice !== undefined && (
-              <>
-                <p className="text-xs text-[#999999] line-through">
-                  {formatPrice(product.originalPrice)}
-                </p>
-                <p className="text-xs font-medium text-[#111111]">
-                  You save {formatPrice(product.originalPrice - product.price)}
-                </p>
-              </>
-            )}
           </div>
           <button
             id={`add-to-cart-${product.id}`}

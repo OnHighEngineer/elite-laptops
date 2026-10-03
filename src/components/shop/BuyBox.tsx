@@ -23,16 +23,6 @@ export function BuyBox({ product }: { product: Product }) {
       <div className="border border-[#E5E5E5] rounded-xl p-5 space-y-4">
         <div>
           <p className="text-3xl font-bold text-[#111111]">{formatPrice(product.price)}</p>
-          {savings !== null && product.originalPrice !== undefined && (
-            <p className="mt-1 text-sm text-[#666666]">
-              <span className="line-through text-[#999999]">
-                {formatPrice(product.originalPrice)}
-              </span>{" "}
-              <span className="font-medium text-[#111111]">
-                You save {formatPrice(product.originalPrice - product.price)} ({savings}% off)
-              </span>
-            </p>
-          )}
           <p className="mt-2 text-sm font-medium text-[#111111]">
             {product.inStock ? (product.stock !== undefined && product.stock <= 3 ? `Only ${product.stock} left` : "In stock") : product.stockStatus === "coming_soon" ? "Coming soon" : "Out of stock"}
           </p>

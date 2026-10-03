@@ -4,29 +4,17 @@ import { conditionLabel, discountPercent, effectiveStatus, findProduct, specList
 import { STORE_GSTIN, STORE_TERMS, warrantyLabel } from "@/lib/store-terms";
 
 describe("discountPercent", () => {
-  it("rounds the saving", () => {
-    expect(discountPercent({ price: 38999, originalPrice: 45000 })).toBe(13);
-  });
-  it("is null without an original price", () => {
+  it("always returns null since discount percentage badges are removed", () => {
+    expect(discountPercent({ price: 38999, originalPrice: 45000 })).toBeNull();
     expect(discountPercent({ price: 100 })).toBeNull();
-  });
-  it("is null when the saving rounds to 0%", () => {
-    expect(discountPercent({ price: 38999, originalPrice: 39100 })).toBeNull();
-  });
-  it("is null for a zero original price", () => {
-    expect(discountPercent({ price: 100, originalPrice: 0 })).toBeNull();
-  });
-  it("is null when original is not higher than price", () => {
-    expect(discountPercent({ price: 100, originalPrice: 100 })).toBeNull();
-    expect(discountPercent({ price: 100, originalPrice: 50 })).toBeNull();
   });
 });
 
 describe("conditionLabel", () => {
-  it("maps every grade", () => {
-    expect(conditionLabel("new")).toBe("New");
-    expect(conditionLabel("refurbished")).toBe("Certified Refurbished");
-    expect(conditionLabel("open-box")).toBe("Open Box");
+  it("maps every grade to Refurbished", () => {
+    expect(conditionLabel("new")).toBe("Refurbished");
+    expect(conditionLabel("refurbished")).toBe("Refurbished");
+    expect(conditionLabel("open-box")).toBe("Refurbished");
   });
 });
 

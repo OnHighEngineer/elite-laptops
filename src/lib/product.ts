@@ -1,17 +1,15 @@
 import type { Condition, Product, SpecDetails, StockStatus } from "@/data/products";
 
 export function discountPercent(
-  p: Pick<Product, "price" | "originalPrice">
+  _p: Pick<Product, "price" | "originalPrice">
 ): number | null {
-  if (!p.originalPrice || p.originalPrice <= p.price) return null;
-  const pct = Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);
-  return pct >= 1 ? pct : null;
+  return null;
 }
 
 const LABELS: Record<Condition, string> = {
-  new: "New",
-  refurbished: "Certified Refurbished",
-  "open-box": "Open Box",
+  new: "Refurbished",
+  refurbished: "Refurbished",
+  "open-box": "Refurbished",
 };
 
 export function conditionLabel(c: Condition): string {
