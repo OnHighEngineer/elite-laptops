@@ -1,95 +1,109 @@
 "use client";
 
 import { useState } from "react";
-import { Send } from "lucide-react";
-import { whatsappUrl } from "@/lib/utils";
+import { Send, CheckCircle2 } from "lucide-react";
+import { validateContact, type ContactFields } from "@/lib/contact";
 
-const WHATSAPP_NUMBER = "917676459688";
+const EMPTY: ContactFields = { name: "", email: "", topic: "Order", message: "" };
+const TOPICS = ["Order", "Warranty", "Exchange", "Other"];
+const INPUT =
+  "w-full min-h-11 px-4 py-3 border border-[#E5E5E5] rounded-xl text-base text-[#111111] placeholder:text-[#AAAAAA] focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition-all bg-white";
 
-interface Fields {
-  name: string;
-  phone: string;
-  model: string;
-  issue: string;
-}
-
-const EMPTY: Fields = { name: "", phone: "", model: "", issue: "" };
+type Errors = ReturnType<typeof validateContact>;
 
 export function ContactForm() {
-  const [fields, setFields] = useState<Fields>(EMPTY);
-  const [submitted, setSubmitted] = useState(false);
+  const [fields, setFields] = useState<ContactFields>(EMPTY);
+  const [errors, setErrors] = useState<Errors>({});
+  const [sent, setSent] = useState(false);
 
-  const set = (k: keyof Fields) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setFields((f) => ({ ...f, [k]: e.target.value }));
+  const set =
+    (k: keyof ContactFields) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setFields((f) => ({ ...f, [k]: e.target.value }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const msg = `Hello Elite Laptops,\n\nName: ${fields.name}\nPhone: ${fields.phone}\nLaptop Model: ${fields.model}\nIssue: ${fields.issue}`;
-    window.open(whatsappUrl(WHATSAPP_NUMBER, msg), "_blank");
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 5000);
+    const found = validateContact(fields);
+    setErrors(found);
+    if (Object.keys(found).length > 0) return;
+    setSent(true);
+    setFields(EMPTY);
   };
+
+  if (sent) {
+    return (
+      <div
+        role="status"
+        className="bg-white border border-[#E5E5E5] rounded-2xl p-8 shadow-sm text-center space-y-3"
+      >
+        <CheckCircle2 className="w-10 h-10 mx-auto text-[#111111]" aria-hidden />
+        <p className="font-semibold text-[#111111]">Thanks, we will reply by email shortly.</p>
+        <button
+          type="button"
+          onClick={() => setSent(false)}
+          className="text-sm text-[#666666] underline hover:text-[#111111] min-h-11"
+        >
+          Send another message
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form
       id="contact-form"
       onSubmit={handleSubmit}
-      className="bg-white border border-[#E5E5E5] rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 w-full text-left"
+      className="bg-white border border-[#E5E5E5] rounded-2xl p-5 sm:p-8 shadow-sm space-y-5 w-full text-left"
       noValidate
     >
-      <Field
-        id="name"
-        label="Your Name"
-        type="text"
-        value={fields.name}
-        onChange={set("name")}
-        required
-        placeholder="Rajesh Kumar"
-      />
-      <Field
-        id="phone"
-        label="Phone Number"
-        type="tel"
-        value={fields.phone}
-        onChange={set("phone")}
-        required
-        placeholder="9876543210"
-      />
-      <Field
-        id="model"
-        label="Laptop Model"
-        type="text"
-        value={fields.model}
-        onChange={set("model")}
-        placeholder="e.g. Dell Inspiron 15, HP Pavilion"
-      />
-      <div>
-        <label htmlFor="issue" className="block text-xs font-semibold text-[#111111] uppercase tracking-wider mb-2">
-          Issue / Message
-        </label>
-        <textarea
-          id="issue"
-          value={fields.issue}
-          onChange={set("issue")}
-          rows={4}
-          placeholder="Describe the issue or what you are looking for..."
-          className="w-full px-4 py-3 border border-[#E5E5E5] rounded-xl text-sm text-[#111111] placeholder:text-[#AAAAAA] focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] resize-none transition-all bg-white"
+      <Field id="name" label="Your Name" error={errors.name}>
+        <input
+          id="name"
+          type="text"
+          autoComplete="name"
+          value={fields.name}
+          onChange={set("name")}
+          placeholder="Rajesh Kumar"
+          className={INPUT}
         />
-      </div>
+      </Field>
+      <Field id="email" label="Email" error={errors.email}>
+        <input
+          id="email"
+          type="email"
+          autoComplete="email"
+          value={fields.email}
+          onChange={set("email")}
+          placeholder="you@example.com"
+          className={INPUT}
+        />
+      </Field>
+      <Field id="topic" label="Topic">
+        <select id="topic" value={fields.topic} onChange={set("topic")} className={INPUT}>
+          {TOPICS.map((t) => (
+            <option key={t}>{t}</option>
+          ))}
+        </select>
+      </Field>
+      <Field id="message" label="Message" error={errors.message}>
+        <textarea
+          id="message"
+          value={fields.message}
+          onChange={set("message")}
+          rows={4}
+          placeholder="How can we help?"
+          className={`${INPUT} resize-none`}
+        />
+      </Field>
 
       <button
         id="contact-submit"
         type="submit"
-        disabled={!fields.name || !fields.phone}
-        className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#111111] text-white text-sm font-semibold rounded-xl hover:bg-[#111111]/85 transition-all shadow-sm active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
+        className="flex items-center justify-center gap-2 w-full min-h-12 py-3.5 bg-[#111111] text-white text-sm font-semibold rounded-xl hover:bg-[#111111]/85 transition-all shadow-sm active:scale-[0.99]"
       >
         <Send className="w-4 h-4" />
-        {submitted ? "Opening WhatsApp..." : "Send via WhatsApp"}
+        Send message
       </button>
-
-      <p className="text-xs text-[#888888] text-center">
-        This will open WhatsApp with your message pre-filled.
-      </p>
     </form>
   );
 }
@@ -97,34 +111,28 @@ export function ContactForm() {
 function Field({
   id,
   label,
-  type,
-  value,
-  onChange,
-  placeholder,
-  required,
+  error,
+  children,
 }: {
   id: string;
   label: string;
-  type: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  required?: boolean;
+  error?: string;
+  children: React.ReactNode;
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-xs font-semibold text-[#111111] uppercase tracking-wider mb-2">
-        {label} {required && <span className="text-[#888888]">*</span>}
+      <label
+        htmlFor={id}
+        className="block text-xs font-semibold text-[#111111] uppercase tracking-wider mb-2"
+      >
+        {label}
       </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className="w-full px-4 py-3 border border-[#E5E5E5] rounded-xl text-sm text-[#111111] placeholder:text-[#AAAAAA] focus:outline-none focus:ring-1 focus:ring-[#111111] focus:border-[#111111] transition-all bg-white"
-      />
+      {children}
+      {error && (
+        <p role="alert" className="mt-1.5 text-xs text-[#B00020]">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

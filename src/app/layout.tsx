@@ -2,21 +2,22 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart-context";
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
+import { AccountLink } from "@/components/layout/AccountLink";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
-import { FloatingDock } from "@/components/layout/FloatingDock";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: {
-    default: "Elite Laptops — Sales, Service & Upgrades in Karnataka",
+    default: "Elite Laptops — Certified Refurbished Laptops",
     template: "%s | Elite Laptops",
   },
   description:
-    "Buy new and refurbished laptops online. Genuine spare parts — batteries, RAM, SSD, HDD, adapters. Expert service. Karnataka, India.",
-  keywords: ["laptops", "refurbished laptops", "laptop spares", "Karnataka", "Elite Laptops"],
+    "Buy certified refurbished laptops online with warranty and free shipping across India. Karnataka, India.",
+  keywords: ["laptops", "refurbished laptops", "certified refurbished", "buy laptops online", "Karnataka", "Elite Laptops"],
   openGraph: {
     siteName: "Elite Laptops",
     url: "https://www.elitelaptops.in",
@@ -33,11 +34,11 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen flex flex-col bg-white overflow-x-hidden">
         <CartProvider>
-          <Navbar />
+          <AnnouncementBar />
+          <Navbar accountSlot={<AccountLink />} />
           <main className="flex-1">{children}</main>
           <Footer />
           <CartDrawer />
-          <FloatingDock />
         </CartProvider>
       </body>
     </html>

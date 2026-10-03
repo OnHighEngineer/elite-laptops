@@ -1,17 +1,37 @@
-export type Condition = "new" | "refurbished";
+export type Condition = "new" | "refurbished" | "open-box";
+export type StockStatus = "in_stock" | "out_of_stock" | "coming_soon";
+
+export interface SpecDetails {
+  processor: string;
+  ram: string;
+  storage: string;
+  graphics: string;
+  screen: string;
+  os: string;
+  battery: string;
+}
 
 export interface Product {
   id: string;
   name: string;
   brand: string;
-  category: "laptop" | "spare";
-  spareCategory?: "battery" | "ram" | "ssd" | "hdd" | "adapter";
   image: string;
+  /** All photos, cover first. Falls back to [image] when absent. */
+  images?: string[];
   price: number;
   originalPrice?: number;
   specs: string[];
   condition: Condition;
   inStock: boolean;
+  category?: string;
+  stockStatus?: StockStatus;
+  warrantyMonths?: number;
+  serviceMonths?: number;
+  warrantyNote?: string;
+  specDetails?: SpecDetails;
+  extraSpecs?: string[];
+  /** Units available. When set, orders above this are rejected. */
+  stock?: number;
   featured?: boolean;
   description: string;
 }
@@ -21,7 +41,6 @@ export const laptops: Product[] = [
     "id": "hp-pavilion-15",
     "name": "HP Pavilion 15",
     "brand": "HP",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop",
     "price": 38999,
     "originalPrice": 45000,
@@ -40,7 +59,6 @@ export const laptops: Product[] = [
     "id": "hp-elitebook-840",
     "name": "HP EliteBook 840 G8",
     "brand": "HP",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&auto=format&fit=crop",
     "price": 54999,
     "originalPrice": 72000,
@@ -59,7 +77,6 @@ export const laptops: Product[] = [
     "id": "dell-inspiron-15",
     "name": "Dell Inspiron 15 3511",
     "brand": "Dell",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=800&auto=format&fit=crop",
     "price": 34999,
     "originalPrice": 42000,
@@ -78,7 +95,6 @@ export const laptops: Product[] = [
     "id": "dell-latitude-5420",
     "name": "Dell Latitude 5420",
     "brand": "Dell",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop",
     "price": 48500,
     "originalPrice": 65000,
@@ -97,7 +113,6 @@ export const laptops: Product[] = [
     "id": "lenovo-thinkpad-e15",
     "name": "Lenovo ThinkPad E15",
     "brand": "Lenovo",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop",
     "price": 42999,
     "originalPrice": 55000,
@@ -116,7 +131,6 @@ export const laptops: Product[] = [
     "id": "lenovo-ideapad-5",
     "name": "Lenovo IdeaPad 5",
     "brand": "Lenovo",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=800&auto=format&fit=crop",
     "price": 36499,
     "originalPrice": 44000,
@@ -135,7 +149,6 @@ export const laptops: Product[] = [
     "id": "asus-vivobook-15",
     "name": "Asus VivoBook 15",
     "brand": "Asus",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&auto=format&fit=crop",
     "price": 32999,
     "originalPrice": 40000,
@@ -154,7 +167,6 @@ export const laptops: Product[] = [
     "id": "asus-zenbook-14",
     "name": "Asus ZenBook 14",
     "brand": "Asus",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop",
     "price": 59999,
     "originalPrice": 74000,
@@ -173,7 +185,6 @@ export const laptops: Product[] = [
     "id": "dell-xps-13",
     "name": "Dell XPS 13 9310",
     "brand": "Dell",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&auto=format&fit=crop",
     "price": 74999,
     "originalPrice": 95000,
@@ -192,7 +203,6 @@ export const laptops: Product[] = [
     "id": "asus-tuf-a15",
     "name": "Asus TUF Gaming A15",
     "brand": "Asus",
-    "category": "laptop",
     "image": "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800&auto=format&fit=crop",
     "price": 62999,
     "originalPrice": 78000,
@@ -209,9 +219,4 @@ export const laptops: Product[] = [
   }
 ];
 
-export const spares: Product[] = [];
-
-export const allProducts: Product[] = [...laptops];
-
 export const BRANDS = ["HP", "Dell", "Lenovo", "Asus"] as const;
-export const SPARE_CATEGORIES = ["battery", "ram", "ssd", "hdd", "adapter"] as const;

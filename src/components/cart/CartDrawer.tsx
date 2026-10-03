@@ -1,18 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { X, Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { Drawer } from "@/components/motion/drawer";
-import { formatPrice, whatsappUrl } from "@/lib/utils";
-
-const WHATSAPP_NUMBER = "917676459688";
-
-function buildWhatsAppMessage(items: ReturnType<typeof useCart>["items"], total: number) {
-  const lines = items.map(
-    (i) => `- ${i.product.name} (x${i.quantity}) = ${formatPrice(i.product.price * i.quantity)}`
-  );
-  return `Hello Elite Laptops,\n\nI would like to order:\n${lines.join("\n")}\n\nTotal: ${formatPrice(total)}\n\nPlease confirm availability.`;
-}
+import { formatPrice } from "@/lib/utils";
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, updateQty, total } = useCart();
@@ -25,7 +17,7 @@ export function CartDrawer() {
         <button
           id="cart-close"
           onClick={closeCart}
-          className="p-1.5 rounded-lg hover:bg-[#F5F5F5] transition-colors"
+          className="w-11 h-11 flex items-center justify-center rounded-lg hover:bg-[#F5F5F5] transition-colors"
           aria-label="Close cart"
         >
           <X className="w-4 h-4 text-[#666666]" />
@@ -38,7 +30,7 @@ export function CartDrawer() {
           <div className="flex flex-col items-center justify-center h-full gap-3 py-16 text-center px-8">
             <ShoppingBag className="w-10 h-10 text-[#E5E5E5]" />
             <p className="text-sm text-[#666666]">Your cart is empty.</p>
-            <p className="text-xs text-[#999999]">Add laptops or spares to get started.</p>
+            <p className="text-xs text-[#999999]">Add a laptop to get started.</p>
           </div>
         ) : (
           <ul className="divide-y divide-[#E5E5E5]">
@@ -57,11 +49,11 @@ export function CartDrawer() {
                   </p>
 
                   {/* Quantity controls */}
-                  <div className="flex items-center gap-2 mt-2">
+                  <div className="flex items-center gap-1 mt-2">
                     <button
                       id={`qty-minus-${product.id}`}
                       onClick={() => updateQty(product.id, quantity - 1)}
-                      className="w-6 h-6 rounded border border-[#E5E5E5] flex items-center justify-center hover:bg-[#F5F5F5] transition-colors"
+                      className="w-11 h-11 sm:w-9 sm:h-9 rounded border border-[#E5E5E5] flex items-center justify-center hover:bg-[#F5F5F5] transition-colors"
                       aria-label="Decrease quantity"
                     >
                       <Minus className="w-3 h-3 text-[#666666]" />
@@ -72,7 +64,7 @@ export function CartDrawer() {
                     <button
                       id={`qty-plus-${product.id}`}
                       onClick={() => updateQty(product.id, quantity + 1)}
-                      className="w-6 h-6 rounded border border-[#E5E5E5] flex items-center justify-center hover:bg-[#F5F5F5] transition-colors"
+                      className="w-11 h-11 sm:w-9 sm:h-9 rounded border border-[#E5E5E5] flex items-center justify-center hover:bg-[#F5F5F5] transition-colors"
                       aria-label="Increase quantity"
                     >
                       <Plus className="w-3 h-3 text-[#666666]" />
@@ -81,7 +73,7 @@ export function CartDrawer() {
                     <button
                       id={`remove-${product.id}`}
                       onClick={() => removeItem(product.id)}
-                      className="ml-auto p-1 rounded hover:bg-[#F5F5F5] transition-colors"
+                      className="ml-auto w-11 h-11 sm:w-9 sm:h-9 flex items-center justify-center rounded hover:bg-[#F5F5F5] transition-colors"
                       aria-label="Remove item"
                     >
                       <Trash2 className="w-3.5 h-3.5 text-[#999999]" />
@@ -103,16 +95,15 @@ export function CartDrawer() {
               {formatPrice(total)}
             </span>
           </div>
-          <p className="text-xs text-[#999999]">Taxes and delivery calculated at checkout.</p>
-          <a
-            id="whatsapp-checkout"
-            href={whatsappUrl(WHATSAPP_NUMBER, buildWhatsAppMessage(items, total))}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-3 bg-[#111111] text-white text-sm font-medium rounded-lg hover:bg-[#111111]/85 transition-colors"
+          <p className="text-xs text-[#999999]">Free shipping across India.</p>
+          <Link
+            id="checkout-button"
+            href="/checkout"
+            onClick={closeCart}
+            className="flex items-center justify-center w-full min-h-12 py-3 bg-[#111111] text-white text-sm font-medium rounded-lg hover:bg-[#111111]/85 transition-colors"
           >
-            Order via WhatsApp
-          </a>
+            Checkout
+          </Link>
         </div>
       )}
     </Drawer>

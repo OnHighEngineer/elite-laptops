@@ -1,23 +1,23 @@
 "use client";
 
-import { BRANDS, SPARE_CATEGORIES } from "@/data/products";
+import { BRANDS, type Condition } from "@/data/products";
+import { conditionLabel } from "@/lib/product";
+import { formatPrice } from "@/lib/utils";
 
 export interface Filters {
   brands: string[];
   maxPrice: number;
-  condition: "all" | "new" | "refurbished";
-  spareCategory: string;
+  condition: "all" | Condition;
 }
 
 interface Props {
   filters: Filters;
   onChange: (f: Filters) => void;
-  showSpareFilter?: boolean;
 }
 
 const PRICE_MAX = 100000;
 
-export function FilterSidebar({ filters, onChange, showSpareFilter }: Props) {
+export function FilterSidebar({ filters, onChange }: Props) {
   const toggleBrand = (b: string) => {
     const next = filters.brands.includes(b)
       ? filters.brands.filter((x) => x !== b)
@@ -35,7 +35,7 @@ export function FilterSidebar({ filters, onChange, showSpareFilter }: Props) {
         <ul className="space-y-2">
           {BRANDS.map((b) => (
             <li key={b}>
-              <label className="flex items-center gap-2.5 cursor-pointer group">
+              <label className="flex items-center gap-2.5 cursor-pointer group min-h-11 lg:min-h-0">
                 <input
                   id={`brand-${b}`}
                   type="checkbox"
@@ -58,9 +58,9 @@ export function FilterSidebar({ filters, onChange, showSpareFilter }: Props) {
           Condition
         </p>
         <ul className="space-y-2">
-          {(["all", "new", "refurbished"] as const).map((c) => (
+          {(["all", "new", "refurbished", "open-box"] as const).map((c) => (
             <li key={c}>
-              <label className="flex items-center gap-2.5 cursor-pointer group">
+              <label className="flex items-center gap-2.5 cursor-pointer group min-h-11 lg:min-h-0">
                 <input
                   id={`condition-${c}`}
                   type="radio"
@@ -69,8 +69,8 @@ export function FilterSidebar({ filters, onChange, showSpareFilter }: Props) {
                   onChange={() => onChange({ ...filters, condition: c })}
                   className="w-4 h-4 accent-[#111111]"
                 />
-                <span className="text-sm capitalize text-[#666666] group-hover:text-[#111111] transition-colors">
-                  {c === "all" ? "All" : c}
+                <span className="text-sm text-[#666666] group-hover:text-[#111111] transition-colors">
+                  {c === "all" ? "All" : conditionLabel(c)}
                 </span>
               </label>
             </li>
@@ -94,63 +94,20 @@ export function FilterSidebar({ filters, onChange, showSpareFilter }: Props) {
           className="w-full accent-[#111111]"
         />
         <div className="flex justify-between mt-1">
-          <span className="text-xs text-[#999999]">?5,000</span>
+          <span className="text-xs text-[#999999]">{formatPrice(5000)}</span>
           <span className="text-xs font-medium text-[#111111]">
-            ?{filters.maxPrice.toLocaleString("en-IN")}
+            {formatPrice(filters.maxPrice)}
           </span>
         </div>
       </div>
-
-      {/* Spare category (only on /spares) */}
-      {showSpareFilter && (
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#666666] mb-3">
-            Category
-          </p>
-          <ul className="space-y-2">
-            <li>
-              <label className="flex items-center gap-2.5 cursor-pointer group">
-                <input
-                  id="spare-cat-all"
-                  type="radio"
-                  name="spareCategory"
-                  checked={filters.spareCategory === ""}
-                  onChange={() => onChange({ ...filters, spareCategory: "" })}
-                  className="w-4 h-4 accent-[#111111]"
-                />
-                <span className="text-sm text-[#666666] group-hover:text-[#111111] transition-colors">
-                  All
-                </span>
-              </label>
-            </li>
-            {SPARE_CATEGORIES.map((c) => (
-              <li key={c}>
-                <label className="flex items-center gap-2.5 cursor-pointer group">
-                  <input
-                    id={`spare-cat-${c}`}
-                    type="radio"
-                    name="spareCategory"
-                    checked={filters.spareCategory === c}
-                    onChange={() => onChange({ ...filters, spareCategory: c })}
-                    className="w-4 h-4 accent-[#111111]"
-                  />
-                  <span className="text-sm capitalize text-[#666666] group-hover:text-[#111111] transition-colors">
-                    {c}
-                  </span>
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {/* Reset */}
       <button
         id="filter-reset"
         onClick={() =>
-          onChange({ brands: [], maxPrice: PRICE_MAX, condition: "all", spareCategory: "" })
+          onChange({ brands: [], maxPrice: PRICE_MAX, condition: "all" })
         }
-        className="text-xs text-[#666666] underline hover:text-[#111111] transition-colors"
+        className="text-xs text-[#666666] underline hover:text-[#111111] transition-colors min-h-11 lg:min-h-0"
       >
         Reset filters
       </button>

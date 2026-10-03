@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { laptops } from "@/data/products";
+import { getCatalog } from "@/lib/catalog";
 import { ProductCard } from "@/components/shop/ProductCard";
 
-export function FeaturedProducts() {
-  const featured = laptops.filter((p) => p.featured).slice(0, 6);
+export async function FeaturedProducts() {
+  const featured = (await getCatalog()).filter((p) => p.featured).slice(0, 6);
 
   return (
     <section className="bg-white border-b border-[#E5E5E5]">
@@ -13,7 +13,7 @@ export function FeaturedProducts() {
           <div>
             <h2 className="text-2xl font-semibold text-[#111111]">Featured Laptops</h2>
             <p className="text-sm text-[#666666] mt-1">
-              Hand-picked new and refurbished picks
+              Hand-picked certified refurbished picks
             </p>
           </div>
           <Link
@@ -24,7 +24,7 @@ export function FeaturedProducts() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
           {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
@@ -32,7 +32,7 @@ export function FeaturedProducts() {
 
         <Link
           href="/shop"
-          className="sm:hidden flex items-center gap-1 mt-5 text-sm font-medium text-[#111111]"
+          className="sm:hidden flex items-center gap-1 mt-5 min-h-11 text-sm font-medium text-[#111111]"
         >
           View all laptops <ArrowRight className="w-4 h-4" />
         </Link>
