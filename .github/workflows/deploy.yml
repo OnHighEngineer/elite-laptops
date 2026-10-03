@@ -1,12 +1,18 @@
-name: Manual Deploy Action
+name: Manual Deployment Pipeline
 
 on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Manual Deploy
+  manual-deploy:
+    name: Manual Trigger Deployment Check
     runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: "https://ytrfmqubfoagnehcpajk.supabase.co"
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "sb_publishable_zKCZBkRBV_UI5cHeS36dhg_ebAEwUPp"
+      SUPABASE_SERVICE_ROLE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0cmZtcXViZm9hZ25laGNwYWprIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTAxOTQ5OSwiZXhwIjoyMTA2NTk1NDk5fQ.LVxiNi9JqMxl6gAEspbqw0drUH0fRacE1-Jd6cwV2zA"
+      NEXT_PUBLIC_SITE_URL: "https://elite-laptops-fk48.vercel.app"
 
     steps:
       - name: Checkout repository
@@ -19,7 +25,10 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Verify Production Build
+      - name: Run Test Suite
+        run: npm test -- --run
+
+      - name: Validate Production Build
         run: npm run build
